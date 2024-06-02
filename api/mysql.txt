@@ -1,0 +1,554 @@
+
+create table if not exists auction_contract (
+id integer primary key auto_increment,
+auction integer not null default 0,
+contract integer not null default 1
+);
+
+
+create table if not exists amount_split_points (
+id integer primary key auto_increment,
+description varchar(100) not null
+);
+
+
+create table if not exists selling_point (
+id integer primary key auto_increment,
+name varchar(100) not null,
+floor_code varchar(100) not null,
+floor_id varchar(100) not null,
+active integer not null default 1,
+datetime TIMESTAMP not null
+);
+
+
+
+create table  if not exists system_keys (
+id integer primary key auto_increment,
+selling_pointid integer not null,
+booking_key varchar(100) not null,
+stop_order_key varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(selling_pointid) references selling_point(id)
+);
+
+
+create table if not exists selling_point_image (
+id integer primary key auto_increment,
+selling_pointid integer not null,
+image varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(selling_pointid) references selling_point(id)
+);
+
+
+create table if not exists currency (
+id integer primary key auto_increment,
+description varchar(100) not null,
+datetime TIMESTAMP not null
+);
+
+
+create table if not exists buyer (
+id integer primary key auto_increment,
+selling_pointid integer not null,
+name varchar(100) not null,
+buyer_code varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(selling_pointid) references selling_point(id)
+);
+
+
+create table if not exists splits (
+id integer primary key auto_increment,
+value integer not null
+);
+
+create table if not exists seasons (
+id integer primary key auto_increment,
+description varchar(100) not null,
+active integer not null default 1,
+datetime TIMESTAMP not null
+);
+
+create table if not exists users (
+id integer primary key auto_increment,
+username varchar(100) not null,
+password varchar(100) not null,
+active integer not null default 1,
+confirm integer not null default 0,
+created_at varchar(100) not null
+);
+
+
+
+create table if not exists rights (
+id integer primary key auto_increment,
+userid integer not null,
+created_byid integer not null,
+admin integer not null default 0,
+transporter_receiving integer not null default 0,
+scale integer not null default 0,
+junus integer not null default 0,
+buyer integer not null default 0,
+balance integer not null default 0,
+salessheets integer not null default 0,
+accounts integer not null default 0,
+transporter_payments integer not null default 0,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(created_byid) references users(id)
+);
+
+
+create table if not exists start_of_day (
+id integer primary key auto_increment,
+userid integer not null,
+seasonid integer not null,
+description varchar(100) not null,
+active integer not null default 1,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(seasonid) references seasons(id)
+);
+
+
+
+create table if not exists exchange_rate (
+id integer primary key auto_increment,
+userid integer not null,
+seasonid integer not null,
+start_of_dayid integer not null,
+amount double(100,6) not null,
+active integer not null default 1,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(start_of_dayid) references start_of_day(id),
+foreign key(seasonid) references seasons(id)
+);
+
+
+
+
+
+create table if not exists growers (
+id integer primary key auto_increment,
+userid integer not null,
+selling_pointid integer not null,
+grower_num varchar(100) not null,
+name varchar(100) not null,
+surname varchar(100) not null,
+national_id varchar(100) not null,
+phone varchar(100) not null,
+address1 varchar(100) not null,
+address2 varchar(100) not null,
+contractor varchar(100) not null,
+farm_name varchar(100) not null,
+province varchar(100) not null,
+district varchar(100) not null,
+dry_land_ha varchar(100) not null,
+irr_land_ha varchar(100) not null,
+dryland varchar(100) not null,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(selling_pointid) references selling_point(id)
+);
+
+
+
+create table if not exists transporter (
+id integer primary key auto_increment,
+userid integer not null,
+seasonid integer not null,
+name varchar(100) not null,
+id_num varchar(100) not null,
+truck_num varchar(100) not null,
+location varchar(100) not null,
+active integer not null default 1,
+open_close integer not null default 1,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(seasonid) references seasons(id)
+);
+
+
+
+
+create table if not exists transporter_growers (
+id integer primary key auto_increment,
+userid integer not null,
+transporterid integer not null,
+growerid integer not null,
+selling_pointid integer not null,
+bales integer not null default 0,
+junused_bales integer not null default 0,
+open_close integer not null default 0,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(transporterid) references transporter(id),
+foreign key(selling_pointid) references selling_point(id),
+foreign key(growerid) references growers(id)
+);
+
+
+
+
+create table if not exists bale_mass (
+id integer primary key auto_increment,
+userid integer not null,
+seasonid integer not null,
+temp_bacode varchar(100) not null,
+mass integer not null,
+used integer not null default 0,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(seasonid) references seasons(id)
+);
+
+
+
+
+
+create table if not exists bale_junus (
+id integer primary key auto_increment,
+userid integer not null,
+transporter_growersid integer not null,
+bale_massid integer not null,
+growerid integer not null,
+bale_group integer not null,
+lot integer not null,
+splitid integer not null default 1,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(splitid) references splits(id),
+foreign key(bale_massid) references bale_mass(id),
+foreign key(growerid) references growers(id),
+foreign key(transporter_growersid) references transporter_growers(id)
+);
+
+
+
+create table if not exists tickets (
+id integer primary key auto_increment,
+userid integer not null,
+bale_junusid integer not null,
+barcode varchar(100) not null,
+start_of_dayid integer not null,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(bale_junusid) references bale_junus(id),
+foreign key(start_of_dayid) references start_of_day(id)
+);
+
+
+
+
+create table if not exists ticket_check_letter (
+id integer primary key auto_increment,
+userid integer not null,
+bale_junusid integer not null,
+letter varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(bale_junusid) references bale_junus(id)
+);
+
+
+
+create table if not exists booked_bales (
+id integer primary key auto_increment,
+userid integer not null,
+growerid integer not null,
+book_date varchar(100) not null,
+comm_graded varchar(100) not null,
+bales_booked varchar(100) not null,
+bales_delivered varchar(100) not null,
+bales_handled varchar(100) not null,
+sell_date varchar(100) not null,
+book_user varchar(100) not null,
+ip_address varchar(100) not null,
+floor varchar(100) not null,
+sale varchar(100) not null,
+booked_id varchar(100) not null,
+reoffer varchar(100) not null,
+booked_by varchar(100) not null,
+prefered_rep varchar(100) not null,
+last_sell varchar(100) not null,
+prefered_time varchar(100) not null,
+venue varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(growerid) references growers(id)
+);
+
+
+
+create table if not exists floor_summary (
+id integer primary key auto_increment,
+userid integer not null,
+ticketsid integer not null,
+row integer not null,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(ticketsid) references tickets(id)
+);
+
+
+create table if not exists timb_grades (
+id integer primary key auto_increment,
+description varchar(100) not null,
+active integer not null default 1,
+datetime TIMESTAMP not null,
+);
+
+
+create table if not exists buyer_grades (
+id integer primary key auto_increment,
+description varchar(100) not null,
+active integer not null default 1,
+datetime TIMESTAMP not null,
+);
+
+
+
+
+create table if not exists sold_bales (
+id integer primary key auto_increment,
+userid integer not null,
+ticketsid integer not null,
+sales_rep varchar(100),
+sale_code varchar(100),
+timb_gradesid integer not null,
+buyer_gradesid integer not null,
+price varchar(100) not null,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(ticketsid) references tickets(id),
+foreign key(timb_gradesid) references timb_grades(id),
+foreign key(buyer_gradesid) references buyer_grades(id)
+);
+
+create table if not exists balanced_bales (
+id integer primary key auto_increment,
+userid integer not null,
+splitid integer not null,
+growerid integer not null,
+transporter_growersid integer not null,
+created_at varchar(100) not null,
+stoporder_processed integer not null default 0,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(splitid) references splits(id),
+foreign key(growerid) references growers(id),
+foreign key(transporter_growersid) references transporter_growers(id)
+);
+
+
+
+
+create table if not exists daily_totals (
+id integer primary key auto_increment,
+userid integer not null,
+balanced_balesid integer not null,
+exchange_rateid integer not null,
+mass integer not null,
+usd_value double(100,4) not null,
+zim_value double(100,4) not null,
+laid_bales integer not null,
+sold_bales integer not null,
+rejected_bales integer not null,
+average_price double(100,4) not null,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(balanced_balesid) references balanced_bales(id),
+foreign key(exchange_rateid) references exchange_rate(id)
+);
+
+create table if not exists year_to_date_totals(
+id integer primary key auto_increment,
+userid integer not null,
+growerid integer not null,
+seasonid integer not null,
+mass integer not null,
+usd_value double(100,4) not null,
+zim_value double(100,4) not null,
+laid_bales integer not null,
+sold_bales integer not null,
+rejected_bales integer not null,
+average_price double(100,4) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(growerid) references growers(id),
+foreign key(seasonid) references seasons(id)
+);
+
+create table if not exists grower_creditors(
+id integer primary key auto_increment,
+userid integer not null,
+name varchar(100) not null,
+creditor_no varchar(100) not null,
+creditor_name varchar(100) not null,
+creditor_type varchar(100) not null,
+business_type varchar(100) not null,
+cell_phone varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id)
+);
+
+
+
+create table if not exists charge_type(
+id integer primary key auto_increment,
+description varchar(100) not null
+);
+
+
+create table if not exists grower_charges(
+id integer primary key auto_increment,
+userid integer not null,
+selling_pointid integer not null,
+description varchar(100) not null,
+charge_typeid integer not null,
+amount double(100,7) not null,
+creditor_no integer not null,
+datetime TIMESTAMP not null,
+foreign key(charge_typeid) references charge_type(id),
+foreign key(userid) references users(id),
+foreign key(selling_pointid) references selling_point(id)
+);
+
+
+create table if not exists balanced_bales_charges(
+id integer primary key auto_increment,
+userid integer not null,
+grower_chargeid integer not null,
+balanced_balesid integer not null,
+usd_value double(100,4) not null,
+zim_value double(100,4) not null,
+datetime TIMESTAMP not null,
+foreign key(grower_chargeid) references grower_charges(id),
+foreign key(userid) references users(id),
+foreign key(balanced_balesid) references balanced_bales(id)
+);
+
+
+create table if not exists deductions(
+id integer primary key auto_increment,
+userid integer not null,
+grower_chargeid integer not null,
+balanced_balesid integer not null,
+usd_value double(100,4) not null,
+zim_value double(100,4) not null,
+foreign key(grower_chargeid) references grower_charges(id),
+foreign key(userid) references users(id),
+foreign key(balanced_balesid) references balanced_bales(id)
+);
+
+
+
+
+create table if not exists selling_point_dispatch (
+id integer primary key auto_increment,
+userid integer not null,
+buyerid integer not null,
+destination varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(buyerid) references buyer(id),
+foreign key(userid) references users(id)
+);
+
+
+
+
+
+
+create table if not exists dispatch_destination(
+id integer primary key auto_increment,
+userid integer not null,
+selling_point_dispatchid integer not null,
+driver_name varchar(100) not null,
+driver_surname varchar(100) not null,
+driver_id_number varchar(100) not null,
+horse_num varchar(100) not null,
+trailer_num varchar(100) not null,
+created_at varchar(100) not null,
+open_close integer not null default 1,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(selling_point_dispatchid) references selling_point_dispatch(id),
+foreign key(userid) references users(id)
+);
+
+
+
+
+
+create table if not exists dispatch(
+id integer primary key auto_increment,
+userid integer not null,
+dispatch_destinationid integer not null,
+sold_baleid integer not null,
+created_at varchar(100) not null,
+datetime TIMESTAMP not null,
+foreign key(dispatch_destinationid) references grower_charges(id),
+foreign key(userid) references users(id),
+foreign key(sold_baleid) references sold_bales(id)
+);
+
+
+
+create table stoporders();
+
+create table rejected_bales();
+
+create table parameters();
+
+create table exchange_rate();
+
+create table road_blocks();
+
+create table banking_details();
+
+create table bank_accounts();
+
+create table invoice_split();
+
+create table invoice_summary();
+
+create table grower_summary();
+
+create table dispatch_destination();
+
+
+insert into splits(value) values("0");
+insert into splits(value) values("1");
+insert into splits(value) values("2");
+insert into splits(value) values("3");
+insert into splits(value) values("4");
+insert into splits(value) values("5");
+insert into splits(value) values("6");
+insert into splits(value) values("7");
+insert into splits(value) values("8");
+insert into splits(value) values("9");
+insert into splits(value) values("10");
+
+insert into charge_type(description) values("Value");
+insert into charge_type(description) values("Mass");
+insert into charge_type(description) values("Mass and Value");
+insert into charge_type(description) values("Bales");
+
+insert into users(username,password) values("sysadmin","core");
+
+
+
+
