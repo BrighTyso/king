@@ -28,7 +28,7 @@ if (isset($data->userid)) {
         }
     }
 
-    if ($found>0){
+    if ($found==0){
 
         $user_sql = "INSERT INTO selling_point_dispatch(userid,buyerid,destination) VALUES ($userid,$buyerid,'$destination')";
         //$sql = "select * from login";
@@ -44,7 +44,7 @@ if (isset($data->userid)) {
 
 
     } else{
-            $temp=array("response"=>"Failed");
+            $temp=array("response"=>"Dispatch Point Already Created");
             array_push($response,$temp);
         }
 

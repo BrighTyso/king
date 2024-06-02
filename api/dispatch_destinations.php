@@ -23,7 +23,7 @@ if (isset($data->userid)) {
 
 
 
-    $user_sql = "INSERT INTO dispatch_destination(userid,selling_point_dispatchid,driver_name,driver_surname,driver_id_number,horse_num,trailer_num,created_at) VALUES ($userid,$selling_point_dispatchid,$driver_name,$driver_surname,$driver_id_number,$horse_num,$trailer_num,$created_at)";
+    $user_sql = "INSERT INTO dispatch_destination(userid,selling_point_dispatchid,driver_name,driver_surname,driver_id_number,horse_num,trailer_num,created_at) VALUES ($userid,$selling_point_dispatchid,'$driver_name','$driver_surname','$driver_id_number','$horse_num','$trailer_num','$created_at')";
     //$sql = "select * from login";
     if ($conn->query($user_sql)===TRUE) {
 
@@ -31,7 +31,7 @@ if (isset($data->userid)) {
         $temp=array("response"=>"success");
         array_push($response,$temp);
     }else{
-        $temp=array("response"=>"Failed");
+        $temp=array("response"=>$conn->error);
         array_push($response,$temp);
     }
 
