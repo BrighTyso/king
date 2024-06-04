@@ -312,12 +312,12 @@ datetime TIMESTAMP not null,
 
 create table if not exists buyer_grades (
 id integer primary key auto_increment,
+buyerid integer not null default 1,
 description varchar(100) not null,
 active integer not null default 1,
 datetime TIMESTAMP not null,
+foreign key(buyerid) references buyer(id)
 );
-
-
 
 
 create table if not exists sold_bales (
@@ -470,8 +470,6 @@ foreign key(userid) references users(id)
 
 
 
-
-
 create table if not exists dispatch_destination(
 id integer primary key auto_increment,
 userid integer not null,
@@ -500,7 +498,7 @@ dispatch_destinationid integer not null,
 sold_baleid integer not null,
 created_at varchar(100) not null,
 datetime TIMESTAMP not null,
-foreign key(dispatch_destinationid) references grower_charges(id),
+foreign key(dispatch_destinationid) references dispatch_destination(id),
 foreign key(userid) references users(id),
 foreign key(sold_baleid) references sold_bales(id)
 );
