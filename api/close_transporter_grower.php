@@ -22,16 +22,14 @@ if (isset($data->description) && isset($data->userid) && isset($data->seasonid))
     $userid=$data->userid;
 
 
-        $user_sql1 = "update start_of_day set active=0 where id != $found";
-        //$sql = "select * from login";
-        if ($conn->query($user_sql1)===TRUE) {
+    $user_sql2 = "update transporter_growers set junused_bales=junused_bales+1 where id = $transporter_growersid";
+    //$sql = "select * from login";
+    if ($conn->query($user_sql2)===TRUE) {
 
-            $last_id = $conn->insert_id;
-            $temp = array("response" => "success");
-            array_push($response, $temp);
-
-
-        }else{
+        $last_id = $conn->insert_id;
+        $temp=array("response"=>"success");
+        array_push($response,$temp);
+    }else{
             $temp=array("response"=>"failed");
             array_push($response,$temp);
 

@@ -37,7 +37,7 @@ if (isset($data->row) && isset($data->barcode) && isset($data->created_at)){
 
 
 
-    $sql = "Select * from floor_summary where ticketsid=$ticketsid";
+    $sql = "Select * from floor_summary where ticketsid=$ticketid";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -81,8 +81,14 @@ if (isset($data->row) && isset($data->barcode) && isset($data->created_at)){
         }
 
     }else{
-        $temp = array("response" => "Barcode not found");
-        array_push($response, $temp);
+        if ($found==1){
+            $temp = array("response" => "Barcode Already Scanned");
+            array_push($response, $temp);
+        }else{
+            $temp = array("response" => "Barcode not found");
+            array_push($response, $temp);
+        }
+
     }
 
 

@@ -25,9 +25,8 @@ if (isset($data->name) && isset($data->seasonid) && isset($data->truck_num)){
     $user_sql = "INSERT INTO transporter(userid,seasonid,name,id_num,truck_num,location,created_at) VALUES ($userid,$seasonid,'$name','$id_num','$truck_num','$location','$created_at')";
     //$sql = "select * from login";
     if ($conn->query($user_sql)===TRUE) {
-
         $last_id = $conn->insert_id;
-        $temp=array("response"=>"success");
+        $temp=array("response"=>"success","id"=>$last_id);
         array_push($response,$temp);
     }else{
         $temp=array("response"=>"Failed");

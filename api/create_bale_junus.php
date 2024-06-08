@@ -15,7 +15,7 @@ $found=0;
 $already_used=0;
 
 if (isset($data->temp_barcode) && isset($data->grower_num) && isset($data->lot)){
-
+    $userid=$data->userid;
     $temp_bacode=$data->temp_barcode;
     $grower_num=$data->grower_num;
     $bale_group=$data->bale_group;
@@ -24,10 +24,11 @@ if (isset($data->temp_barcode) && isset($data->grower_num) && isset($data->lot))
 
 
     $growerid=0;
-    $userid=$data->userid;
+
     $transporter_growersid=0;
     $bale_massid=0;
-    $transporter_growersid=0;
+    $transporter_number_of_bales=0;
+    $transporter_junused_bales=0;
 
 
 
@@ -59,7 +60,7 @@ if (isset($data->temp_barcode) && isset($data->grower_num) && isset($data->lot))
 
 
 
-    $sql = "Select * from growers where grower_num='$grower_num'";
+    $sql = "Select distinct * from growers where grower_num='$grower_num' limit 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -75,7 +76,7 @@ if (isset($data->temp_barcode) && isset($data->grower_num) && isset($data->lot))
 
 
 
-    $sql = "Select * from transporter_growers where open_close=0  and bales>junused_bales order by id ";
+    $sql = "Select * from transporter_growers where open_close=0  and bales>junused_bales and growerid=$growerid order by id ";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -84,6 +85,8 @@ if (isset($data->temp_barcode) && isset($data->grower_num) && isset($data->lot))
             // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
 
             $transporter_growersid=$row["id"];
+            $transporter_number_of_bales=$row["bales"];
+            $transporter_junused_bales=$row["junused_bales"];
 
         }
     }
@@ -114,12 +117,12 @@ if (isset($data->temp_barcode) && isset($data->grower_num) && isset($data->lot))
 
             $last_id = $conn->insert_id;
 
-            $user_sql2 = "update transporter_growers set junused_bales=junused_bales+1 where id = $transporter_growersid";
+            $user_sql2 = "update transporter_growers set junused_bales=junused_bales+1 where id = $transporter_growersid ";
             //$sql = "select * from login";
             if ($conn->query($user_sql2)===TRUE) {
 
                 $last_id = $conn->insert_id;
-                $temp=array("response"=>"success");
+                $temp=array("response"=>"success","total_bales"=>$transporter_number_of_bales,"junused_bales"=>$transporter_junused_bales+1);
                 array_push($response,$temp);
             }
 
