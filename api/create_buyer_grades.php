@@ -14,10 +14,11 @@ $response=array();
 if (isset($data->description) && isset($data->userid)){
 
     $description=$data->description;
+    $buyerid=$data->buyerid;
 
 
 
-    $user_sql = "INSERT INTO buyer_grades(description) VALUES ('$description')";
+    $user_sql = "INSERT INTO buyer_grades(description,buyerid) VALUES ('$description',$buyerid)";
     //$sql = "select * from login";
     if ($conn->query($user_sql)===TRUE) {
 
@@ -28,7 +29,6 @@ if (isset($data->description) && isset($data->userid)){
         $temp=array("response"=>"Failed");
         array_push($response,$temp);
     }
-
 
 }
 

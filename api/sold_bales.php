@@ -11,13 +11,12 @@ $data = json_decode(file_get_contents("php://input"));
 
 $response=array();
 
-if (isset($data->sale_code) && isset($data->barcode) && isset($data->created_at)){
+if (isset($data->sale_code) && isset($data->created_at)){
 
 
     $userid=$data->userid;
-    $barcode=$data->barcode;
     $created_at=$data->created_at;
-    $ticketsid=0;
+    $ticketsid=$data->ticketid;
     $found=0;
     $soldid=0;
 
@@ -28,21 +27,6 @@ if (isset($data->sale_code) && isset($data->barcode) && isset($data->created_at)
     $price=$data->price;
     $timb_gradesid=0;
     $buyer_gradesid=0;
-
-
-
-    $sql = "Select * from tickets where barcode='$barcode'";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        // output data of each row
-        while($row = $result->fetch_assoc()) {
-            // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
-
-            $ticketsid=$row["id"];
-
-        }
-    }
 
 
 

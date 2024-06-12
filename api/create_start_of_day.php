@@ -15,11 +15,12 @@ $found=0;
 
 $response=array();
 
-if (isset($data->description) && isset($data->userid) && isset($data->seasonid)){
+if (isset($data->description) && isset($data->userid)){
 
     $description=$data->description;
-    $seasonid=$data->seasonid;
+    $seasonid=0;
     $userid=$data->userid;
+    $amount=$data->amount;
 
 
 
@@ -36,8 +37,21 @@ if (isset($data->description) && isset($data->userid) && isset($data->seasonid))
         }
     }
 
+    $sql = "Select * from seasons order by id desc limit 1";
+    $result = $conn->query($sql);
 
-    if ($found==0) {
+    if ($result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+            // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
+
+            $seasonid=$row["id"];
+
+        }
+    }
+
+
+    if ($found==0 && $seasonid>0) {
         $user_sql = "INSERT INTO start_of_day(description,userid,seasonid) VALUES ('$description',$userid,$seasonid)";
         //$sql = "select * from login";
         if ($conn->query($user_sql)===TRUE) {
@@ -48,9 +62,17 @@ if (isset($data->description) && isset($data->userid) && isset($data->seasonid))
             //$sql = "select * from login";
             if ($conn->query($user_sql1)===TRUE) {
 
-                $last_id = $conn->insert_id;
-                $temp=array("response"=>"success");
-                array_push($response,$temp);
+                    $user_sql = "INSERT INTO exchange_rate(userid,start_of_dayid,seasonid,amount) VALUES ($userid,$last_id,$seasonid,'$amount')";
+                    //$sql = "select * from login";
+                    if ($conn->query($user_sql)===TRUE) {
+
+                        $last_id = $conn->insert_id;
+                        $temp=array("response"=>"success");
+                        array_push($response,$temp);
+                    }else{
+                        $temp=array("response"=>$conn->error);
+                        array_push($response,$temp);
+                    }
 
             }else{
 
@@ -69,6 +91,7 @@ if (isset($data->description) && isset($data->userid) && isset($data->seasonid))
         }
 
     }else{
+
 
         $user_sql1 = "update start_of_day set active=0 where id != $found";
         //$sql = "select * from login";

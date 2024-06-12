@@ -49,6 +49,8 @@ datetime TIMESTAMP not null
 );
 
 
+
+
 create table if not exists buyer (
 id integer primary key auto_increment,
 selling_pointid integer not null,
@@ -413,6 +415,12 @@ description varchar(100) not null
 );
 
 
+create table if not exists internal_deductions(
+id integer primary key auto_increment,
+description varchar(100) not null
+);
+
+
 create table if not exists grower_charges(
 id integer primary key auto_increment,
 userid integer not null,
@@ -489,6 +497,11 @@ foreign key(userid) references users(id)
 
 
 
+create table if not exists ticket_check_letter(
+id integer primary key auto_increment,
+character varchar(100) ,
+value integer not null
+);
 
 
 create table if not exists dispatch(
@@ -546,6 +559,56 @@ insert into charge_type(description) values("Mass and Value");
 insert into charge_type(description) values("Bales");
 
 insert into users(username,password) values("sysadmin","core");
+
+
+insert into ticket_check_letter(characters,value)values("0",0);
+insert into ticket_check_letter(characters,value)values("1",1);
+insert into ticket_check_letter(characters,value)values("2",2);
+insert into ticket_check_letter(characters,value)values("3",3);
+insert into ticket_check_letter(characters,value)values("4",4);
+insert into ticket_check_letter(characters,value)values("5",5);
+insert into ticket_check_letter(characters,value)values("6",6);
+insert into ticket_check_letter(characters,value)values("7",7);
+insert into ticket_check_letter(characters,value)values("8",8);
+insert into ticket_check_letter(characters,value)values("9",9);
+insert into ticket_check_letter(characters,value)values("A",10);
+insert into ticket_check_letter(characters,value)values("B",11);
+insert into ticket_check_letter(characters,value)values("C",12);
+insert into ticket_check_letter(characters,value)values("D",13);
+insert into ticket_check_letter(characters,value)values("E",14);
+insert into ticket_check_letter(characters,value)values("F",15);
+insert into ticket_check_letter(characters,value)values("G",16);
+insert into ticket_check_letter(characters,value)values("H",17);
+insert into ticket_check_letter(characters,value)values("I",18);
+insert into ticket_check_letter(characters,value)values("J",19);
+insert into ticket_check_letter(characters,value)values("K",20);
+insert into ticket_check_letter(characters,value)values("L",21);
+insert into ticket_check_letter(characters,value)values("M",22);
+insert into ticket_check_letter(characters,value)values("N",23);
+insert into ticket_check_letter(characters,value)values("O",24);
+insert into ticket_check_letter(characters,value)values("P",25);
+insert into ticket_check_letter(characters,value)values("Q",26);
+insert into ticket_check_letter(characters,value)values("R",27);
+insert into ticket_check_letter(characters,value)values("S",28);
+insert into ticket_check_letter(characters,value)values("T",29);
+insert into ticket_check_letter(characters,value)values("U",30);
+insert into ticket_check_letter(characters,value)values("V",31);
+insert into ticket_check_letter(characters,value)values("W",32);
+insert into ticket_check_letter(characters,value)values("X",33);
+insert into ticket_check_letter(characters,value)values("Y",34);
+insert into ticket_check_letter(characters,value)values("Z",35);
+insert into ticket_check_letter(characters,value)values("-",36);
+insert into ticket_check_letter(characters,value)values(".",37);
+insert into ticket_check_letter(characters,value)values(" ",38);
+insert into ticket_check_letter(characters,value)values("$",39);
+insert into ticket_check_letter(characters,value)values("/",40);
+insert into ticket_check_letter(characters,value)values("+",41);
+insert into ticket_check_letter(characters,value)values("%",42);
+
+
+
+
+
 
 
 
