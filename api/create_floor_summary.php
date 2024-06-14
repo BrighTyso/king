@@ -37,6 +37,8 @@ if (isset($data->row) && isset($data->barcode) && isset($data->created_at)){
 
 
 
+
+
     $sql = "Select * from floor_summary where ticketsid=$ticketid";
     $result = $conn->query($sql);
 

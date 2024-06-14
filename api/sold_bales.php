@@ -120,8 +120,20 @@ if (isset($data->sale_code) && isset($data->created_at)){
         }
 
     }else{
-        $temp = array("response" => "Barcode not found");
-        array_push($response, $temp);
+        if ($timb_gradesid==0){
+            $temp = array("response" => "Invalid Timb Grade");
+            array_push($response, $temp);
+        }else if($buyer_gradesid==0){
+            $temp = array("response" => "Invalid Buyer Grade");
+            array_push($response, $temp);
+        }else if($soldid>0){
+            $temp = array("response" => "Barcode Already Captured");
+            array_push($response, $temp);
+        }else{
+            $temp = array("response" => "Bale Not Found");
+            array_push($response, $temp);
+        }
+
     }
 
 

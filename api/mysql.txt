@@ -252,17 +252,6 @@ foreign key(start_of_dayid) references start_of_day(id)
 
 
 
-create table if not exists ticket_check_letter (
-id integer primary key auto_increment,
-userid integer not null,
-bale_junusid integer not null,
-letter varchar(100) not null,
-datetime TIMESTAMP not null,
-foreign key(userid) references users(id),
-foreign key(bale_junusid) references bale_junus(id)
-);
-
-
 
 create table if not exists booked_bales (
 id integer primary key auto_increment,
