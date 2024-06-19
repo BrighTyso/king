@@ -365,6 +365,7 @@ foreign key(balanced_balesid) references balanced_bales(id),
 foreign key(exchange_rateid) references exchange_rate(id)
 );
 
+
 create table if not exists year_to_date_totals(
 id integer primary key auto_increment,
 userid integer not null,
@@ -403,11 +404,6 @@ id integer primary key auto_increment,
 description varchar(100) not null
 );
 
-
-create table if not exists internal_deductions(
-id integer primary key auto_increment,
-description varchar(100) not null
-);
 
 
 create table if not exists grower_charges(
@@ -507,6 +503,88 @@ foreign key(sold_baleid) references sold_bales(id)
 
 
 
+
+create table if not exists internal_stop_order(
+id integer primary key auto_increment,
+userid integer not null,
+selling_pointid integer not null,
+description varchar(100) not null,
+creditor_number integer not null,
+datetime TIMESTAMP not null,
+foreign key(userid) references users(id),
+foreign key(selling_pointid) references selling_point(id)
+);
+
+
+
+
+
+create table if not exists internal_stop_order_amount(
+id integer primary key auto_increment,
+userid integer not null,
+internal_stop_orderid integer not null,
+seasonid integer not null,
+charge_typeid integer not null,
+amount double(100,6) not null,
+priority integer not null,
+active integer not null default 1,
+default_deduction integer not null default 0,
+datetime TIMESTAMP not null,
+foreign key(internal_stop_orderid) references internal_stop_order(id),
+foreign key(userid) references users(id),
+foreign key(seasonid) references seasons(id),
+foreign key(charge_typeid) references charge_type(id)
+);
+
+
+
+
+
+create table if not exists split_internal_stop_order(
+id integer primary key auto_increment,
+userid integer not null,
+internal_stop_order_amountid integer not null,
+transporter_growersid integer not null,
+splitsid integer not null,
+quantity integer not null,
+datetime TIMESTAMP not null,
+foreign key(internal_stop_order_amountid) references internal_stop_order_amount(id),
+foreign key(userid) references users(id),
+foreign key(transporter_growersid) references transporter_growers(id),
+foreign key(splitsid) references splits(id)
+);
+
+
+create table if not exists internal_stop_order_to_balanced_bales(
+id integer primary key auto_increment,
+userid integer not null,
+internal_stop_order_amountid integer not null,
+balanced_balesid integer not null,
+quantity integer not null default 1,
+datetime TIMESTAMP not null,
+foreign key(internal_stop_order_amountid) references internal_stop_order_amount(id),
+foreign key(userid) references users(id),
+foreign key(balanced_balesid) references balanced_bales(id)
+);
+
+
+
+create table if not exists internal_stop_order_deducted_amounts(
+id integer primary key auto_increment,
+userid integer not null,
+internal_stop_order_to_balanced_balesid integer not null,
+amount double(100,6) not null,
+datetime TIMESTAMP not null,
+foreign key(internal_stop_order_to_balanced_balesid) references internal_stop_order_to_balanced_bales(id)
+);
+
+
+
+
+
+
+
+
 create table stoporders();
 
 create table rejected_bales();
@@ -541,11 +619,17 @@ insert into splits(value) values("7");
 insert into splits(value) values("8");
 insert into splits(value) values("9");
 insert into splits(value) values("10");
+insert into splits(value) values("11");
+insert into splits(value) values("12");
+insert into splits(value) values("13");
+insert into splits(value) values("14");
+insert into splits(value) values("15");
 
 insert into charge_type(description) values("Value");
 insert into charge_type(description) values("Mass");
 insert into charge_type(description) values("Mass and Value");
 insert into charge_type(description) values("Bales");
+insert into charge_type(description) values("Amount");
 
 insert into users(username,password) values("sysadmin","core");
 
