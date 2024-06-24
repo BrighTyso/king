@@ -15,6 +15,7 @@ $response=array();
 if (isset($data->userid)){
 
     $userid=$data->userid;
+    $sale_batchid=0;
 
 
     $sql = "Select distinct grower_num,growers.name,growers.surname,bale_junus.transporter_growersid,splitid,selling_point.name as selling_point_name,growers.id as growerid from bale_junus join growers on growers.id=bale_junus.growerid join selling_point on selling_point.id=growers.selling_pointid";
@@ -24,7 +25,7 @@ if (isset($data->userid)){
         // output data of each row
         while($row = $result->fetch_assoc()) {
             // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
-
+            $sale_batchid=0;
             $transporter_growersid =$row["transporter_growersid"];
             $splitid=$row["splitid"];
             $already_balanced="NO";
@@ -40,12 +41,13 @@ if (isset($data->userid)){
                 while($row2 = $result2->fetch_assoc()) {
                     // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
                     $already_balanced="YES";
+                    $sale_batchid=$row2["sale_batchid"];
 
                 }
             }
 
 
-            $temp=array("already_balanced"=>$already_balanced,"transporter_growersid"=>$row["transporter_growersid"],"grower_num"=>$row["grower_num"],"splitid"=>$row["splitid"],"name"=>$row["name"],"surname"=>$row["surname"],"number_of_bales"=>$result1->num_rows,"selling_point_name"=>$row["selling_point_name"],"growerid"=>$row["growerid"]);
+            $temp=array("sale_batchid"=>$sale_batchid,"already_balanced"=>$already_balanced,"transporter_growersid"=>$row["transporter_growersid"],"grower_num"=>$row["grower_num"],"splitid"=>$row["splitid"],"name"=>$row["name"],"surname"=>$row["surname"],"number_of_bales"=>$result1->num_rows,"selling_point_name"=>$row["selling_point_name"],"growerid"=>$row["growerid"]);
 
             array_push($response,$temp);
 

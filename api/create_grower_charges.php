@@ -15,15 +15,29 @@ if (isset($data->userid)) {
 
     $userid = $data->userid;
     $selling_pointid = $data->selling_pointid;
-    $description = $data->description;
+    $statutoryid = $data->statutoryid;
     $charge_typeid = $data->charge_typeid;
     $amount = $data->amount;
     $creditor_no= $data->creditor_no;
+    //$priority= $data->priority;
     $creditor_found=0;
+    $seasonid=0;
 
 
 
-    $sql = "Select distinct * from grower_charges where creditor_no=$creditor_no";
+    $sql = "Select distinct * from seasons where active=1 limit 1";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+
+            $seasonid=$row["id"];
+        }
+    }
+
+
+    $sql = "Select distinct * from grower_charges where creditor_no=$creditor_no and selling_pointid=$selling_pointid";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -37,16 +51,13 @@ if (isset($data->userid)) {
 
     if ($creditor_found==0){
 
-        $user_sql = "INSERT INTO grower_charges(userid, selling_pointid , description, charge_typeid, amount, creditor_no ) VALUES ($userid, $selling_pointid , '$description', $charge_typeid, $amount, '$creditor_no')";
+        $user_sql = "INSERT INTO grower_charges(userid,selling_pointid,charge_typeid, amount, creditor_no,statutoryid,seasonid) VALUES ($userid, $selling_pointid , $charge_typeid, $amount, '$creditor_no',$statutoryid,$seasonid)";
         //$sql = "select * from login";
         if ($conn->query($user_sql) === TRUE) {
 
             $last_id = $conn->insert_id;
-
-            $last_id = $conn->insert_id;
             $temp = array("response" => "success");
             array_push($response, $temp);
-
 //
         } else {
             $temp = array("response" => $conn->error);

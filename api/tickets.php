@@ -17,12 +17,15 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
 
     $userid=$data->userid;
     $start_barcode=$data->start_barcode;
-    $created_at=$data->created_at;
+    $created_at=date("Y-m-d");
     $transporter_growersid=$data->transporter_growersid;
     $bale_junusid=0;
     $barcode="";
     $my_numbers=0;
     $tickets_created=0;
+    $already_balanced=0;
+    $start_of_day_found=0;
+    $todays_date=date("Y-m-d");
 
 
 
@@ -54,7 +57,37 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
     }
 
 
-    if ($found==0){
+    $sql = "Select * from start_of_day where created_at='$todays_date' and active=1";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+            // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
+
+            $start_of_day_found=$row["id"];
+
+        }
+    }
+
+
+    $sql = "Select * from balanced_bales where  transporter_growersid=$transporter_growersid";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) {
+            // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
+            $already_balanced=$row["id"];
+
+        }
+    }
+
+
+
+    if ($already_balanced==0){
+
+
+    if ($found==0 && $start_of_day_found>0){
 
         $my_numbers=(int) substr($start_barcode,0,9);
 
@@ -138,6 +171,11 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
     }else{
         $temp=array("response"=>"barcode used");
         array_push($response,$temp);
+    }
+
+    }else{
+        $temp = array("response" => "Cannot Set Barcode On Balanced Bales");
+        array_push($response, $temp);
     }
 
 

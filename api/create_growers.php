@@ -32,11 +32,11 @@ if (isset($data->userid)){
     $dry_land_ha=$data->dry_land_ha;
     $irr_land_ha=$data->irr_land_ha;
     $dryland=$data->dryland;
-    $created_at=$data->created_at;
+    $created_at=date("Y-m-d");
 
 
 
-    $sql = "Select * from selling_point where floor_code='$contractor'";
+    $sql = "Select * from selling_point where floor_id='$contractor'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {

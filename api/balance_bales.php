@@ -45,6 +45,7 @@ if (isset($data->userid)) {
     $result = $conn->query($sql);
     $number_of_bales=$result->num_rows;
 
+
     if ($result->num_rows > 0) {
         // output data of each row
         while($row = $result->fetch_assoc()) {
