@@ -93,7 +93,6 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
 
         $check_letter=substr($start_barcode,-1);
 
-
         $bale_junusid=0;
 
         $sql = "Select * from bale_junus where transporter_growersid=$transporter_growersid";
@@ -169,8 +168,15 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
 
 
     }else{
-        $temp=array("response"=>"barcode used");
-        array_push($response,$temp);
+
+        if ($start_of_day_found==0){
+            $temp=array("response"=>"Set Selling date");
+            array_push($response,$temp);
+        }else{
+            $temp=array("response"=>"barcode used");
+            array_push($response,$temp);
+        }
+
     }
 
     }else{
