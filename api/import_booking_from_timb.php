@@ -18,7 +18,7 @@ if (isset($data->userid)) {
     $name=$data->name;
     $floor_code=$data->floor_code;
 
-    $file_name=$name.time().".txt";
+    $file_name=$name."-".time().".txt";
     $path="../files/".$file_name;
     $line="";
     $ciphertext="";
