@@ -57,7 +57,7 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
     }
 
 
-    $sql = "Select * from start_of_day where created_at='$todays_date' and active=1";
+    $sql = "Select * from start_of_day where description='$todays_date' and active=1 limit 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -117,7 +117,7 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
 
 
 
-                $sql1 = "Select characters from ticket_check_letter where value=$rem";
+                $sql1 = "Select characters from ticket_check_letter where character_value=$rem";
                 $result1 = $conn->query($sql1);
 
                 if ($result1->num_rows > 0) {
@@ -133,7 +133,7 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
 
 
                 if ( $tickets_created==0){
-                    $user_sql = "INSERT INTO tickets(userid, bale_junusid, barcode,created_at) VALUES ($userid,$bale_junusid,'$barcode','$created_at')";
+                    $user_sql = "INSERT INTO tickets(userid, bale_junusid, barcode,created_at,start_of_dayid) VALUES ($userid,$bale_junusid,'$barcode','$created_at',$start_of_day_found)";
                     //$sql = "select * from login";
                     if ($conn->query($user_sql)===TRUE) {
 
@@ -141,7 +141,7 @@ if (isset($data->transporter_growersid) && isset($data->start_barcode) && isset(
                         #$temp=array("response"=>"success");
                         #array_push($response,$temp);
                     }else{
-                        $temp=array("response"=>"failed");
+                        $temp=array("response"=>$conn->error);
                         array_push($response,$temp);
                     }
                 }else{

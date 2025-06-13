@@ -14,37 +14,17 @@ $decryptedData="";
 if (isset($data->userid)) {
 
     $userid=$data->userid;
-    $file=$data->file;
-    $name=$data->name;
-    $floor_code=$data->floor_code;
+    $ciphertext=$data->description;
+    $selling_pointid=$data->selling_pointid;
+    $key="";
+    $iv="";
+    $floor_code="";
 
-    $file_name=$name."-".time().".txt";
-    $path="../files/".$file_name;
-    $line="";
-    $ciphertext="";
-
-//    $key = "40B977F5C9D2CE83B12EE5D45B7EA626";
-//    // You can adjust this based on your needs
-//    $iv = "9839ff6f82e27155"; // Make sure it matches the one used during encryption
+    $count=0;
+    $fetched=0;
 
 
-    $key = "";
-    // You can adjust this based on your needs
-    $iv = "";
-
-    if (file_put_contents($path, base64_decode($file))) {
-
-        $fh = fopen($path,'r');
-        while ($line = fgets($fh)) {
-            // <... Do your work with the line ...>
-            //echo($line);
-            $ciphertext=$line;
-        }
-        fclose($fh);
-    }
-
-
-    $sql = "Select * from selling_point join booking_keys on booking_keys.selling_pointid=selling_point.id where floor_id='$floor_code'   limit 1";
+    $sql = "Select * from selling_point join booking_keys on booking_keys.selling_pointid=selling_point.id where selling_point.id=$selling_pointid   limit 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -53,6 +33,7 @@ if (isset($data->userid)) {
             // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
             $key = $row["system_key"];
             $iv = $row["vector"];
+            $floor_code=$row["floor_code"];
         }
     }
 
@@ -70,9 +51,11 @@ if (isset($data->userid)) {
         if ($decryptedData !== false) {
             //echo $decryptedData;
             $array = explode("\r\n", $decryptedData);
+            $fetched=count($array);
+
             for ($i = 0; $i < count($array); $i++) {
 
-                echo json_encode($array[$i]);
+                //echo json_encode($array[$i]);
                 // if($i>0){
                 $file_data = explode(",", $array[$i]);
 
@@ -112,25 +95,31 @@ if (isset($data->userid)) {
                                 // echo "id: " . $row["id"]. " - Name: " . $row["firstname"]. " " . $row["lastname"]. "<br>";
                                 $growerid = $row["id"];
 
-
                             }
                         }
 
-
-                        $user_sql = "INSERT INTO booked_bales(userid,growerid,book_date,comm_graded,bales_booked,bales_delivered,bales_handled,sell_date,book_user,ip_address,floor,sale,booked_id
+                        if ($growerid>0) {
+                            $user_sql = "INSERT INTO booked_bales(userid,growerid,book_date,comm_graded,bales_booked,bales_delivered,bales_handled,sell_date,book_user,ip_address,floor,sale,booked_id
                                                         ,reoffer,booked_by,prefered_rep,last_sell,prefered_time,venue
                                 ) VALUES ($userid,$growerid,$book_date,$comm_graded,$bales_booked,$bales_delivered,$bales_handled
                                 ,$sell_date,$book_user,$ip_address,$floor,$sale,$booked_id
                                                         ,$reoffer,$booked_by,$prefered_rep,$last_sell,$prefered_time,$venue)";
-                        //$sql = "select * from login";
-                        if ($conn->query($user_sql) === TRUE) {
+                            //$sql = "select * from login";
+                            if ($conn->query($user_sql) === TRUE) {
 
-                            $last_id = $conn->insert_id;
+                                $last_id = $conn->insert_id;
+                                $count+=1;
 //                            $temp=array("response"=>"success");
 //                            array_push($response,$temp);
-                        } else {
-                            $temp = array("response" => "Failed");
-                            array_push($response, $temp);
+                            } else {
+//                                $temp = array("response" => $conn->error);
+//                                array_push($response, $temp);
+                            }
+                        }else{
+//                            $temp = array("response" => "grower not found");
+//                            array_push($response, $temp);
+
+                            $grower_not_found+=1;
                         }
 
                     }
@@ -153,13 +142,17 @@ if (isset($data->userid)) {
 
         } else {
             //echo "Decryption failed.";
-            $temp = array("response" => "No Key");
-            array_push($response, $temp);
+//            $temp = array("response" => "No Key");
+//            array_push($response, $temp);
         }
 
     }else{
 
     }
 }
+
+$temp = array("response" =>"success","fetched" => $fetched,"counted"=>$count);
+array_push($response, $temp);
+
 
 echo json_encode($response);

@@ -36,7 +36,7 @@ if (isset($data->userid)){
 
 
 
-    $sql = "Select * from selling_point where floor_id='$contractor'";
+    $sql = "Select * from selling_point where floor_id='$contractor' limit 1";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -66,7 +66,7 @@ if (isset($data->userid)){
     }
 
 
-    if ($found==0) {
+    if ($found==0 && $selling_pointid>0) {
         $user_sql = "INSERT INTO growers(userid,selling_pointid,grower_num,name,surname,national_id,phone,address1,address2,contractor,farm_name,province,district,dry_land_ha,irr_land_ha,dryland,created_at
 ) VALUES ($userid,$selling_pointid,'$grower_num','$name','$surname','$national_id','$phone','$address1','$address2','$contractor','$farm_name','$province','$district','$dry_land_ha','$irr_land_ha','$dryland','$created_at'
 )";
@@ -87,20 +87,25 @@ if (isset($data->userid)){
 
     }else{
 
-        $user_sql1 = "update growers set selling_pointid=$selling_pointid where id= $found";
-        //$sql = "select * from login";
-        if ($conn->query($user_sql1)===TRUE) {
+        if($selling_pointid>0) {
+            $user_sql1 = "update growers set selling_pointid=$selling_pointid where id= $found";
+            //$sql = "select * from login";
+            if ($conn->query($user_sql1) === TRUE) {
 
 
-            $last_id = $conn->insert_id;
-            $temp=array("response"=>"success");
-            array_push($response,$temp);
+                $last_id = $conn->insert_id;
+                $temp = array("response" => "success","contractor" => $contractor);
+                array_push($response, $temp);
 
 
+            } else {
+                $temp = array("response" => "failed","contractor" => $contractor);
+                array_push($response, $temp);
+
+            }
         }else{
-            $temp=array("response"=>"failed");
-            array_push($response,$temp);
-
+            $temp = array("response" => "selling point ","contractor" => $contractor);
+            array_push($response, $temp);
         }
 
     }

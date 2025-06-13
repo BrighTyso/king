@@ -11,7 +11,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 $response=array();
 
-if (isset($data->name) && isset($data->seasonid) && isset($data->truck_num)){
+if ( isset($data->seasonid)){
 
     $userid=$data->userid;
     $seasonid=$data->seasonid;
@@ -19,7 +19,9 @@ if (isset($data->name) && isset($data->seasonid) && isset($data->truck_num)){
     $id_num=$data->id_num;
     $truck_num=$data->truck_num;
     $location=$data->location;
+    $phone=$data->phone;
     $created_at=$data->created_at;
+
 
 
     $user_sql = "INSERT INTO transporter(userid,seasonid,name,id_num,truck_num,location,created_at) VALUES ($userid,$seasonid,'$name','$id_num','$truck_num','$location','$created_at')";
@@ -34,6 +36,9 @@ if (isset($data->name) && isset($data->seasonid) && isset($data->truck_num)){
     }
 
 
+}else{
+    $temp=array("response"=>"Field Empty");
+    array_push($response,$temp);
 }
 
 
